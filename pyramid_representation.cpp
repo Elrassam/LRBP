@@ -1,4 +1,5 @@
 #include "pyramid_representation.h"
+#include "gabor.h"
 
 void pyrmd_rep::divide_image_into_cells(vector<Mat> &cells, Mat & img) {
 	int cells_num = cells.size();
@@ -24,15 +25,21 @@ void pyrmd_rep::apply_lbp(Mat &image, Mat& lbp, int R, int P) {
 }
 
 Mat pyrmd_rep::read_image(const char * file_name) {
-	Mat frame = imread(file_name, 1);
-	
-	Mat image;
 
-	cvtColor(frame, image, CV_BGR2GRAY);
-	Size size(300, 300);
-	resize(frame, image, size);
+
+	Mat src = imread(file_name, 1);
+	
+	Mat image_gray, image_conv, image_resized;
+
+	cvtColor(src, image_gray, CV_BGR2GRAY);
+
+	//image_gray.convertTo(image_conv, CV_32F, 1.0/255, 0);
+
+	Size size(200, 300);
+
+	resize(image_gray, image_resized, size);
 	//image = preprocessing(image);
-	return image;
+	return image_resized;
 }
 
 void pyrmd_rep::concatenate_histograms(vector<Mat>& cells_hist, Mat &image_hist){
@@ -68,7 +75,10 @@ void pyrmd_rep::radon_transform(Mat& cell, Mat& dst, CMatlabEngine &mt){
 
 vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int L,
 															int R, int P, CMatlabEngine &mt) {
-	Mat image = read_image(file_name);
+	Mat src = read_image(file_name);
+	imwrite("D:\\im.jpg", src);
+	Mat image = gabor::gabor(src);
+	imwrite("D:\\im.jpg", image);
 	int num_bins = (int)(floor(pow(2.0, P)));
 	vector<Mat> image_hists_for_each_level(L);
 	for(int l = 0; l < L; l++) {

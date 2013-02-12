@@ -38,7 +38,7 @@ void setup_photos_dataset::load_hists_for_each_level(vector<Mat> &levels_hist, s
 	while (getline(hist_file, hist_values_line)) {
 		char * pch = strtok(((char*)hist_values_line.c_str()), ",");
 		int col = 0;
-		cells_num = (int)(floor(pow(2.0, L * 2)));
+		cells_num = (int)(floor(pow(2.0, i * 2)));
 		levels_hist[i] = Mat::zeros(1, num_bins * cells_num, CV_64FC1);
 		while (pch != NULL){
 			levels_hist[i].at<double>(0, col++) = atoi(pch);

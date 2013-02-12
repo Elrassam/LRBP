@@ -64,5 +64,5 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 		mt.Quit();
 		CoUninitialize();
 	}
-	return ((counter * 100.0) / 188.0);
+	return ((counter * 100.0) / 64.0);
 }
