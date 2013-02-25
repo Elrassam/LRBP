@@ -5,7 +5,7 @@ int main() {
     int R = 2;
     int P = 8;
 	int L = 4;
-	int threshold = 15;
+	int threshold = 5;
 	
 	/*CoInitialize(NULL);
 	CMatlabEngine mt;

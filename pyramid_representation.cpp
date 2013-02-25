@@ -28,7 +28,7 @@ Mat pyrmd_rep::read_image(const char * file_name) {
 	Mat src = imread(file_name, 1);
 	Mat image_grey, image_resized;
 	cvtColor(src, image_grey, CV_BGR2GRAY);
-	Size size(194, 220);
+	Size size(200, 85);
 	resize(image_grey, image_resized, size);
 	//image_resized = preprocessing(image);
 	return image_resized;

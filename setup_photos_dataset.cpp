@@ -6,23 +6,32 @@ void setup_photos_dataset::save_hists_for_each_level(const char* photos_csv_file
 	ifstream photos_file(photos_csv_file, ifstream::in);
 	string pho_path;
 	while (getline(photos_file, pho_path)) {
-		vector<Mat> levels_hist1 = pyrmd_rep::generate_hists_for_each_level(pho_path.c_str(), L, R, P, mt, true);
-		vector<Mat> levels_hist2 = pyrmd_rep::generate_hists_for_each_level(pho_path.c_str(), L, R, P, mt, false);
 		unsigned found = pho_path.find_last_of("\\");
 		unsigned dot = pho_path.find_last_of(".");
 		string file_name = pho_path.substr(found + 1, dot - found - 1);
 		string folder_name = pho_path.substr(0, found + 1);
-		stringstream ss;
-		ss << folder_name << sub_dir << file_name << ".lbp";
-		ofstream myfile;
-		myfile.open ( ss.str());
-		for (int l = 0; l < L; l++) {
-			for(int y = 0; y < levels_hist1[l].cols; y++) {
-				myfile << levels_hist1[l].at<double>(0, y) + levels_hist2[l].at<double>(0, y) << ((y + 1 < levels_hist1[l].cols)? "," : "");
+
+		for(int patch = 1; patch <= 3; patch++){
+			stringstream ss_lbp;
+			ss_lbp << folder_name << sub_dir << file_name << "_" << patch << ".lbp";
+			stringstream ss_pho_patch;
+			ss_pho_patch << folder_name << file_name << "_" << patch << ".jpg";
+
+			string pho_path_patch = ss_pho_patch.str();
+
+			vector<Mat> levels_hist1 = pyrmd_rep::generate_hists_for_each_level(pho_path_patch.c_str(), L, R, P, mt, true);
+			vector<Mat> levels_hist2 = pyrmd_rep::generate_hists_for_each_level(pho_path_patch.c_str(), L, R, P, mt, false);
+		
+			ofstream myfile;
+			myfile.open ( ss_lbp.str());
+			for (int l = 0; l < L; l++) {
+				for(int y = 0; y < levels_hist1[l].cols; y++) {
+					myfile << levels_hist1[l].at<double>(0, y) + levels_hist2[l].at<double>(0, y) << ((y + 1 < levels_hist1[l].cols)? "," : "");
+				}
+				(l + 1 < L)? myfile << "\n": myfile << "";
 			}
-			(l + 1 < L)? myfile << "\n": myfile << "";
+			myfile.close();
 		}
-		myfile.close();
 	}
 }
 

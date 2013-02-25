@@ -16,6 +16,7 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 		ifstream sketches_file(sketches_csv_file, ifstream::in);
 		string sk_line, sk_path, sk_classlabel, pho_path;
 		char separator = ',';
+
 		while (getline(sketches_file, sk_line)) {
 			cout << sketch_number << endl;
 			sk_path = sk_classlabel = "";
@@ -23,54 +24,74 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 			getline(sk_line_ss, sk_path, separator);
 			getline(sk_line_ss, sk_classlabel);
 
-			vector<Mat> levels_hist1_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path.c_str(),
-																	L, R, P, mt, true);
-			vector<Mat> levels_hist1_without_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path.c_str(),
-																	L, R, P, mt, false);
-			vector<double> vec_dists(threshold);
-			vector<string> vec_selected_paths(threshold);
-			fill (vec_dists.begin(),vec_dists.end(),1.7976931348623157e+308);
-			fill (vec_selected_paths.begin(),vec_selected_paths.end(),"");
-			ifstream photos_file(photos_csv_file, ifstream::in);
 
-			while (getline(photos_file, pho_path)) {
+			unsigned found_slash = sk_path.find_last_of("\\");
+			unsigned dot = sk_path.find_last_of(".");
+			string file_name = sk_path.substr(found_slash + 1, dot - found_slash - 1);
+			string folder_name = sk_path.substr(0, found_slash + 1);
+			bool flag = false;
 
-				vector<Mat> levels_hist2(L);
+			for(int patch = 1; patch <= 3 && !flag; patch++){
+				stringstream ss_sk;
+				ss_sk << folder_name << file_name << "_" << patch << ".jpg";
+				string sk_path_patch = ss_sk.str();
 
-				setup_photos_dataset::load_hists_for_each_level(levels_hist2, pho_path, L, P);
+				vector<Mat> levels_hist1_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
+																		L, R, P, mt, true);
+				vector<Mat> levels_hist1_without_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
+																		L, R, P, mt, false);
+				vector<double> vec_dists(threshold);
+				vector<string> vec_selected_paths(threshold);
+				fill (vec_dists.begin(),vec_dists.end(),1.7976931348623157e+308);
+				fill (vec_selected_paths.begin(),vec_selected_paths.end(),"");
+				ifstream photos_file(photos_csv_file, ifstream::in);
 
-				double dist = pyrmd_rep::calculate_dist(levels_hist1_gabor, levels_hist2);
-				dist += pyrmd_rep::calculate_dist(levels_hist1_without_gabor, levels_hist2);
+				while (getline(photos_file, pho_path)) {
+
+					unsigned found_slash_pho = pho_path.find_last_of("\\");
+					unsigned dot_pho = pho_path.find_last_of(".");
+					string file_name_pho = pho_path.substr(found_slash_pho + 1, dot_pho - found_slash_pho - 1);
+					string folder_name_pho = pho_path.substr(0, found_slash_pho + 1);
+					stringstream ss_ph;
+					ss_ph << folder_name_pho << file_name_pho << "_" << patch << ".jpg";
+					string ph_path_patch = ss_ph.str();
+
+					vector<Mat> levels_hist2(L);
+					setup_photos_dataset::load_hists_for_each_level(levels_hist2, ph_path_patch, L, P);
+
+					double dist = pyrmd_rep::calculate_dist(levels_hist1_gabor, levels_hist2);
+					dist += pyrmd_rep::calculate_dist(levels_hist1_without_gabor, levels_hist2);
 			
-				if(dist < vec_dists[threshold - 1]) {
-					vec_dists[threshold - 1] = dist;
-					vec_selected_paths[threshold - 1] = pho_path;
-					for (int i = 0; i < threshold; i++) {
-						for (int j = i + 1; j < threshold; j++) {
-							if (vec_dists[j] < vec_dists[i]) {
-								double tmp = vec_dists[i];
-								vec_dists[i] = vec_dists[j];
-								vec_dists[j] = tmp;
-								string str_tmp = vec_selected_paths[i];
-								vec_selected_paths[i] = vec_selected_paths[j];
-								vec_selected_paths[j] = str_tmp;
+					if(dist < vec_dists[threshold - 1]) {
+						vec_dists[threshold - 1] = dist;
+						vec_selected_paths[threshold - 1] = pho_path;
+						for (int i = 0; i < threshold; i++) {
+							for (int j = i + 1; j < threshold; j++) {
+								if (vec_dists[j] < vec_dists[i]) {
+									double tmp = vec_dists[i];
+									vec_dists[i] = vec_dists[j];
+									vec_dists[j] = tmp;
+									string str_tmp = vec_selected_paths[i];
+									vec_selected_paths[i] = vec_selected_paths[j];
+									vec_selected_paths[j] = str_tmp;
+								}
 							}
 						}
 					}
 				}
+				sort (vec_selected_paths.begin(), vec_selected_paths.end());
+				if(binary_search(vec_selected_paths.begin(), vec_selected_paths.end(), sk_classlabel)){
+					counter++;
+					flag = true;
+				}
+				for(int i = 0; i < vec_selected_paths.size(); i++){
+					outfile << vec_selected_paths[i] << "\n";
+				}
 			}
-			sort (vec_selected_paths.begin(), vec_selected_paths.end());
-			if(binary_search(vec_selected_paths.begin(), vec_selected_paths.end(), sk_classlabel)){
-				counter++;
-			}
-				
-			for(int i = 0; i < vec_selected_paths.size(); i++){
-				outfile << vec_selected_paths[i] << "\n";
-			}
-			outfile << ((counter * 100.0) / sketch_number) << "    " << "\n";
+			outfile << ((counter * 100.0) / sketch_number) << "    " << flag << "\n";
 			outfile << "=============================================" << "\n";
 
-			cout << ((counter * 100.0) / sketch_number) << "    " <<endl;
+			cout << ((counter * 100.0) / sketch_number) << "    " << flag << endl;
 			cout << "=============================================" << endl;
 			sketch_number++;
 	   }
