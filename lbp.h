@@ -14,4 +14,7 @@ namespace lbp {
 	template <typename _Tp>
 	void ELBP_(const cv::Mat& src, cv::Mat& dst, int radius = 1, int neighbors = 8);
 	void ELBP(const Mat& src, Mat& dst, int radius = 1, int neighbors = 8);
+	template <typename _Tp>
+	void VARLBP_(const Mat& src, Mat& dst, int radius, int neighbors = 8);
+	void VARLBP(const Mat& src, Mat& dst, int radius, int neighbors = 8);
 }

@@ -16,7 +16,7 @@ namespace pyrmd_rep {
 	void apply_lbp(Mat &image, Mat& lbp, int R, int P);
 	Mat read_image(const char * file_name);
 	void concatenate_histograms(vector<Mat>& cells_hist, Mat &image_hist);
-	vector<Mat> generate_hists_for_each_level(const char* file_name, int L, int R, int P, CMatlabEngine &mt);
+	vector<Mat> generate_hists_for_each_level(const char* file_name, int L, int R, int P, CMatlabEngine &mt, bool gabor_flag);
 	double calculate_dist(vector<Mat> & levels_hists1, vector<Mat> & levels_hists2);
 	Mat cropImage(IplImage *img, CvRect region);
 }

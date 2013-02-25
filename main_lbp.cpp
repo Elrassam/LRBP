@@ -5,7 +5,7 @@ int main() {
     int R = 2;
     int P = 8;
 	int L = 4;
-	int threshold = 2;
+	int threshold = 15;
 	
 	/*CoInitialize(NULL);
 	CMatlabEngine mt;
@@ -19,6 +19,5 @@ int main() {
 	
 	
 	double acc = testing::calculate_accuracy("D:\\sk_III.csv","D:\\ph_new_III.csv",L, R, P, threshold);
-    while(true);
 	return 0; 
 }

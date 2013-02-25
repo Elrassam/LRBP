@@ -25,9 +25,9 @@ Mat gabor::mkKernel(int ks, double sig, double th, double lm, double ps) {
 
 Mat gabor::gabor(Mat src_f) {
 	int kernel_size = 21;
-	double sig = 2;
+	double sig = 2.5;
 	double lm = 1.5;
-	double th = 25;
+	double th = 24;
 	double ps = 90;
 	Mat kernel = mkKernel(kernel_size, sig, th, lm, ps);
 	Mat dest;

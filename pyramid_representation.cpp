@@ -20,25 +20,17 @@ void pyrmd_rep::divide_image_into_cells(vector<Mat> &cells, Mat & img) {
 }
 
 void pyrmd_rep::apply_lbp(Mat &image, Mat& lbp, int R, int P) {
-    lbp::ELBP(image, lbp, R, P);
+	lbp::ELBP(image, lbp, R, P);
 	normalize(lbp, lbp, 0, 255, NORM_MINMAX, CV_64FC1);
 }
 
 Mat pyrmd_rep::read_image(const char * file_name) {
-
-
 	Mat src = imread(file_name, 1);
-	
-	Mat image_gray, image_conv, image_resized;
-
-	cvtColor(src, image_gray, CV_BGR2GRAY);
-
-	//image_gray.convertTo(image_conv, CV_32F, 1.0/255, 0);
-
-	Size size(200, 300);
-
-	resize(image_gray, image_resized, size);
-	//image = preprocessing(image);
+	Mat image_grey, image_resized;
+	cvtColor(src, image_grey, CV_BGR2GRAY);
+	Size size(194, 220);
+	resize(image_grey, image_resized, size);
+	//image_resized = preprocessing(image);
 	return image_resized;
 }
 
@@ -74,11 +66,14 @@ void pyrmd_rep::radon_transform(Mat& cell, Mat& dst, CMatlabEngine &mt){
 }
 
 vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int L,
-															int R, int P, CMatlabEngine &mt) {
+															int R, int P, CMatlabEngine &mt, bool gabor_flag) {
 	Mat src = read_image(file_name);
-	imwrite("D:\\im.jpg", src);
-	Mat image = gabor::gabor(src);
-	imwrite("D:\\im.jpg", image);
+	Mat image;
+	if(gabor_flag){
+		image = gabor::gabor(src);
+	} else {
+		image = src;
+	}
 	int num_bins = (int)(floor(pow(2.0, P)));
 	vector<Mat> image_hists_for_each_level(L);
 	for(int l = 0; l < L; l++) {
