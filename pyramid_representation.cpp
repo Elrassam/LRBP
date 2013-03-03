@@ -71,9 +71,11 @@ vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int 
 	Mat image;
 	if(gabor_flag){
 		image = gabor::gabor(src);
+		image.convertTo(image,CV_16UC1,255,0);
 	} else {
 		image = src;
 	}
+	imwrite("D:\\im.jpg", image);
 	int num_bins = (int)(floor(pow(2.0, P)));
 	vector<Mat> image_hists_for_each_level(L);
 	for(int l = 0; l < L; l++) {
@@ -85,8 +87,12 @@ vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int 
 		divide_image_into_cells(cells, image);
 		for(int c = 0; c < cells_num; c++) {
 			radon_transform(cells[c], cells_radon[c], mt);
-			apply_lbp(cells_radon[c], cells_lbp[c], R, P);
-			histogram::histogram(cells_lbp[c], cells_hist[c], num_bins);
+			if(gabor_flag){
+				histogram::histogram(cells_radon[c], cells_hist[c], 8, gabor_flag);
+			} else {
+				apply_lbp(cells_radon[c], cells_lbp[c], R, P);
+				histogram::histogram(cells_lbp[c], cells_hist[c], num_bins, gabor_flag);
+			}
 		}
 		concatenate_histograms(cells_hist, image_hists_for_each_level[l]);
 	}

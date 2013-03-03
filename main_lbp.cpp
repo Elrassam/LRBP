@@ -2,7 +2,7 @@
 #include "testing.h"
 
 int main() {
-    int R = 2;
+    int R = 8;
     int P = 8;
 	int L = 4;
 	int threshold = 5;

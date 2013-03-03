@@ -1,11 +1,15 @@
 #include "histogram.h"
 
 template <typename _Tp>
-void histogram::histogram_(const Mat& src, Mat& hist, int numPatterns) {
+void histogram::histogram_(const Mat& src, Mat& hist, int numPatterns, bool gabor_flag) {
 	hist = Mat::zeros(1, numPatterns, CV_64FC1);
 	for(int x = 0; x < src.rows; x++) {
 		for(int y = 0; y < src.cols; y++) {
-			hist.at<double>(0,src.at<_Tp>(x,y)) += 1;
+			if(gabor_flag){
+				hist.at<double>(0,((src.at<_Tp>(x,y)) / 32)) += 1;
+			} else {
+				hist.at<double>(0,src.at<_Tp>(x,y)) += 1;
+			}
 		}
 	}
 }
@@ -41,13 +45,13 @@ double histogram::chi_square(const Mat& histogram0, const Mat& histogram1) {
 	}
 }
 
-void histogram::histogram(const Mat& src, Mat& hist, int numPatterns) {
+void histogram::histogram(const Mat& src, Mat& hist, int numPatterns, bool gabor_flag) {
 	switch(src.type()) {
-		case CV_8SC1: histogram_<char>(src, hist, numPatterns); break;
-		case CV_8UC1: histogram_<unsigned char>(src, hist, numPatterns); break;
-		case CV_16SC1: histogram_<short>(src, hist, numPatterns); break;
-		case CV_16UC1: histogram_<unsigned short>(src, hist, numPatterns); break;
-		case CV_32SC1: histogram_<int>(src, hist, numPatterns); break;
-		case CV_64FC1: histogram_<double>(src, hist, numPatterns); break;
+		case CV_8SC1: histogram_<char>(src, hist, numPatterns, gabor_flag); break;
+		case CV_8UC1: histogram_<unsigned char>(src, hist, numPatterns, gabor_flag); break;
+		case CV_16SC1: histogram_<short>(src, hist, numPatterns, gabor_flag); break;
+		case CV_16UC1: histogram_<unsigned short>(src, hist, numPatterns, gabor_flag); break;
+		case CV_32SC1: histogram_<int>(src, hist, numPatterns, gabor_flag); break;
+		case CV_64FC1: histogram_<double>(src, hist, numPatterns, gabor_flag); break;
 	}
 }
