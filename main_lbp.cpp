@@ -1,7 +1,7 @@
 #pragma once
 #include "testing.h"
 
-int main() {
+int mainmmm() {
     int R = 8;
     int P = 8;
 	int L = 4;
