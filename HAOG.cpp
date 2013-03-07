@@ -21,11 +21,27 @@ Mat haog::get_hist_haog(Mat img){
 	filter2D(img, gradient_y, -1, filter_y, Point(-1,-1), 0, BORDER_REFLECT101);
 	gradient_x.convertTo(gradient_x, TYPE);
 	gradient_y.convertTo(gradient_y, TYPE);
-	magnitude(gradient_x, gradient_y, org_mgntud);
-	phase(gradient_x, gradient_y, org_phs, true);
-	normalize(org_mgntud, org_mgntud, 0, 255, NORM_MINMAX, CV_8UC1);
-	normalize(org_phs, org_phs, 0, 360, NORM_MINMAX, TYPE);
-	Mat hist = haog_hist(org_mgntud, org_phs);
+
+
+	//magnitude(gradient_x, gradient_y, org_mgntud);
+	//phase(gradient_x, gradient_y, org_phs, true);
+
+	pow(gradient_x, 2, gradient_x_square);
+	pow(gradient_y, 2, gradient_y_square);
+	subtract(gradient_x_square, gradient_y_square, gsx);
+	gsx.convertTo(gsx, TYPE);
+	multiply(gradient_x, gradient_y, x_y_mul);
+	multiply(x_y_mul, 2, gsy);
+	gsy.convertTo(gsy, TYPE);
+	magnitude(gsx, gsy, mgntud);
+	phase(gsx, gsy, phs, true);
+
+	/*normalize(org_mgntud, org_mgntud, 0, 255, NORM_MINMAX, CV_8UC1);
+	normalize(org_phs, org_phs, 0, 360, NORM_MINMAX, TYPE);*/
+	normalize(mgntud, mgntud, 0, 255, NORM_MINMAX, CV_8UC1);
+	normalize(phs, phs, 0, 360, NORM_MINMAX, TYPE);
+	//Mat hist = haog_hist(org_mgntud, org_phs);
+	Mat hist = haog_hist(mgntud, phs);
 	return hist;
 	//return org_mgntud;
 }

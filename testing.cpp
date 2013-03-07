@@ -25,18 +25,18 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 			getline(sk_line_ss, sk_classlabel);
 
 
-			unsigned found_slash = sk_path.find_last_of("\\");
+			/*unsigned found_slash = sk_path.find_last_of("\\");
 			unsigned dot = sk_path.find_last_of(".");
 			string file_name = sk_path.substr(found_slash + 1, dot - found_slash - 1);
-			string folder_name = sk_path.substr(0, found_slash + 1);
+			string folder_name = sk_path.substr(0, found_slash + 1);*/
 			bool flag = false;
 
-			for(int patch = 1; patch <= 3 && !flag; patch++){
-				stringstream ss_sk;
-				ss_sk << folder_name << file_name << "_" << patch << ".jpg";
-				string sk_path_patch = ss_sk.str();
+			//for(int patch = 1; patch <= 3 && !flag; patch++){
+				//stringstream ss_sk;
+				//ss_sk << folder_name << file_name /*<< "_" << patch*/ << ".jpg";
+				//string sk_path_patch = ss_sk.str();
 
-				vector<Mat> levels_hist1_with_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
+				vector<Mat> levels_hist1_with_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path/*_patch*/.c_str(),
 																		L, R, P, mt, true);
 				//vector<Mat> levels_hist1_without_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
 					//													L, R, P, mt, false);
@@ -48,17 +48,17 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 
 				while (getline(photos_file, pho_path)) {
 
-					unsigned found_slash_pho = pho_path.find_last_of("\\");
-					unsigned dot_pho = pho_path.find_last_of(".");
-					string file_name_pho = pho_path.substr(found_slash_pho + 1, dot_pho - found_slash_pho - 1);
-					string folder_name_pho = pho_path.substr(0, found_slash_pho + 1);
-					stringstream ss_ph;
-					ss_ph << folder_name_pho << file_name_pho << "_" << patch << ".jpg";
-					string ph_path_patch = ss_ph.str();
+					//unsigned found_slash_pho = pho_path.find_last_of("\\");
+					//unsigned dot_pho = pho_path.find_last_of(".");
+					//string file_name_pho = pho_path.substr(found_slash_pho + 1, dot_pho - found_slash_pho - 1);
+					//string folder_name_pho = pho_path.substr(0, found_slash_pho + 1);
+					//stringstream ss_ph;
+					//ss_ph << folder_name_pho << file_name_pho << "_" << patch << ".jpg";
+					//string ph_path_patch = ss_ph.str();
 
 					vector<Mat> levels_hist2_with_gabor(L);//, levels_hist2_without_gabor(L);
 					setup_photos_dataset::load_hists_for_each_level(levels_hist2_with_gabor,
-													/*levels_hist2_without_gabor,*/ ph_path_patch, L, P);
+													/*levels_hist2_without_gabor,*/ /*ph_path_patch*/ pho_path, L, P);
 
 					double dist = pyrmd_rep::calculate_dist(levels_hist1_with_gabor, levels_hist2_with_gabor);
 					//dist += pyrmd_rep::calculate_dist(levels_hist1_without_gabor, levels_hist2_without_gabor);
@@ -89,7 +89,7 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 					outfile << vec_selected_paths[i] << "\n";
 					cout << vec_selected_paths[i] << endl;
 				}
-			}
+			//}
 			outfile << ((counter * 100.0) / sketch_number) << "    " << flag << "\n";
 			outfile << "=============================================" << "\n";
 

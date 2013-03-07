@@ -62,9 +62,9 @@ using namespace std;
 	  
     }
 
-    int maisssn(int argc, char** argv)
+    int mainuuu(int argc, char** argv)
     {
-		cv::Mat image2 = cv::imread("D:\\000.jpg",1);
+		cv::Mat image2 = cv::imread("D:\\012.jpg",1);
 
         //cv::imshow("Image", image2);
         

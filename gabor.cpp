@@ -32,7 +32,6 @@ Mat gabor::mkKernel(int ks, double sig, double th, double lm, double ps) {
 
 Mat gabor::gabor(Mat src_f) {
     double sig = pos_sigma;
-	//double lm = pos_lm; 
     double lm = 0.5+pos_lm/100.0;
     double th = pos_th;
     double ps = pos_psi;

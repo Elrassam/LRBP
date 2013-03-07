@@ -5,9 +5,9 @@ int main() {
     int R = 2;
     int P = 8;
 	int L = 4;
-	int threshold = 5;
+	int threshold = 10;
 	
-	/*CoInitialize(NULL);
+	CoInitialize(NULL);
 	CMatlabEngine mt;
 	if (mt.IsInitialized()){
 		mt.Show(false);
@@ -15,7 +15,7 @@ int main() {
 		setup_photos_dataset::save_hists_for_each_level("D:\\ph_III.csv", L, R, P, "LEVELS\\", mt);
 		mt.Quit();
 		CoUninitialize();
-	}*/
+	}
 	
 	
 	double acc = testing::calculate_accuracy("D:\\sk_III.csv","D:\\ph_new_III.csv",L, R, P, threshold);

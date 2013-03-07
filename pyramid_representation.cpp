@@ -29,7 +29,7 @@ Mat pyrmd_rep::read_image(const char * file_name) {
 	Mat src = imread(file_name, 1);
 	Mat image_grey, image_resized;
 	cvtColor(src, image_grey, CV_BGR2GRAY);
-	Size size(200, 85);
+	Size size(200, 300);
 	resize(image_grey, image_resized, size);
 	//image_resized = preprocessing(image);
 	return image_resized;
@@ -69,19 +69,28 @@ void pyrmd_rep::radon_transform(Mat& cell, Mat& dst, CMatlabEngine &mt){
 vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int L,
 															int R, int P, CMatlabEngine &mt, bool gabor_flag) {
 	Mat src = read_image(file_name);
-	Mat image;
+	Mat image1;
 	//if(gabor_flag){
-		//image = gabor::gabor(src);
+		image1 = gabor::gabor(src);
+		Mat image;
+		medianBlur(image1, image, 5);
+		//bilateralFilter(image1, image, 9, 8, 6, BORDER_REFLECT101);
+		//Size s(5,5);
+		//GaussianBlur(image,image,s,10,10,BORDER_REFLECT101);
 		//image.convertTo(image,CV_16UC1,255,0);
+		//normalize(image, image, 0, 255, NORM_MINMAX, CV_8UC1);
+		//imshow("1", image);
+		//imshow("2", image1);
+		//waitKey(0);
 //	} else {
-		image = src;
+		//image = src;
 	//}
 	//int num_bins = (int)(floor(pow(2.0, P)));
 	vector<Mat> image_hists_for_each_level(L);
 	for(int l = 0; l < L; l++) {
 		int cells_num = (int)(floor(pow(2.0, l * 2)));
 		vector<Mat> cells(cells_num);
-		vector<Mat> cells_radon(cells_num);
+		//vector<Mat> cells_radon(cells_num);
 		//vector<Mat> cells_lbp(cells_num);
 		//////////added
 		//vector<Mat> cells_haog(cells_num);
@@ -89,11 +98,11 @@ vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int 
 		vector<Mat> cells_hist(cells_num);
 		divide_image_into_cells(cells, image);
 		for(int c = 0; c < cells_num; c++) {
-			radon_transform(cells[c], cells_radon[c], mt);
+			//radon_transform(cells[c], cells_radon[c], mt);
 			/////////////////////////////// added
 			//gabor_flag = false;
 			//apply_lbp(cells[c], cells_lbp[c], R, P);
-			cells_hist[c] = haog::get_hist_haog(cells_radon[c]);
+			cells_hist[c] = haog::get_hist_haog(cells[c]);
 			
 			//histogram::histogram(cells_lbp[c], cells_hist[c], num_bins, gabor_flag);
 			//////////////////////////////////////
