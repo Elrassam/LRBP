@@ -1,8 +1,8 @@
 #pragma once
 #include "testing.h"
 
-int mainmmm() {
-    int R = 8;
+int main() {
+    int R = 2;
     int P = 8;
 	int L = 4;
 	int threshold = 5;

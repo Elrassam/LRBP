@@ -42,6 +42,7 @@ double histogram::chi_square(const Mat& histogram0, const Mat& histogram1) {
 		case CV_16UC1: return chi_square_<unsigned short>(histogram0,histogram1); break;
 		case CV_32SC1: return chi_square_<int>(histogram0,histogram1); break;
 		case CV_64FC1: return chi_square_<double>(histogram0,histogram1); break;
+		case CV_32FC1: return chi_square_<float>(histogram0,histogram1); break;
 	}
 }
 

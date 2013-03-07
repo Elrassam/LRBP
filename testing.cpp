@@ -38,8 +38,8 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 
 				vector<Mat> levels_hist1_with_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
 																		L, R, P, mt, true);
-				vector<Mat> levels_hist1_without_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
-																		L, R, P, mt, false);
+				//vector<Mat> levels_hist1_without_gabor = pyrmd_rep::generate_hists_for_each_level(sk_path_patch.c_str(),
+					//													L, R, P, mt, false);
 				vector<double> vec_dists(threshold);
 				vector<string> vec_selected_paths(threshold);
 				fill (vec_dists.begin(),vec_dists.end(),1.7976931348623157e+308);
@@ -56,12 +56,12 @@ double testing::calculate_accuracy(const char* sketches_csv_file, const char* ph
 					ss_ph << folder_name_pho << file_name_pho << "_" << patch << ".jpg";
 					string ph_path_patch = ss_ph.str();
 
-					vector<Mat> levels_hist2_with_gabor(L), levels_hist2_without_gabor(L);
+					vector<Mat> levels_hist2_with_gabor(L);//, levels_hist2_without_gabor(L);
 					setup_photos_dataset::load_hists_for_each_level(levels_hist2_with_gabor,
-													levels_hist2_without_gabor, ph_path_patch, L, P);
+													/*levels_hist2_without_gabor,*/ ph_path_patch, L, P);
 
 					double dist = pyrmd_rep::calculate_dist(levels_hist1_with_gabor, levels_hist2_with_gabor);
-					dist += pyrmd_rep::calculate_dist(levels_hist1_without_gabor, levels_hist2_without_gabor);
+					//dist += pyrmd_rep::calculate_dist(levels_hist1_without_gabor, levels_hist2_without_gabor);
 			
 					if(dist < vec_dists[threshold - 1]) {
 						vec_dists[threshold - 1] = dist;

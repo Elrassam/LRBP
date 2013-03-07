@@ -1,5 +1,6 @@
 #include "pyramid_representation.h"
 #include "gabor.h"
+#include "haog.h"
 
 void pyrmd_rep::divide_image_into_cells(vector<Mat> &cells, Mat & img) {
 	int cells_num = cells.size();
@@ -69,30 +70,40 @@ vector<Mat> pyrmd_rep::generate_hists_for_each_level(const char* file_name, int 
 															int R, int P, CMatlabEngine &mt, bool gabor_flag) {
 	Mat src = read_image(file_name);
 	Mat image;
-	if(gabor_flag){
-		image = gabor::gabor(src);
-		image.convertTo(image,CV_16UC1,255,0);
-	} else {
+	//if(gabor_flag){
+		//image = gabor::gabor(src);
+		//image.convertTo(image,CV_16UC1,255,0);
+//	} else {
 		image = src;
-	}
-	imwrite("D:\\im.jpg", image);
-	int num_bins = (int)(floor(pow(2.0, P)));
+	//}
+	//int num_bins = (int)(floor(pow(2.0, P)));
 	vector<Mat> image_hists_for_each_level(L);
 	for(int l = 0; l < L; l++) {
 		int cells_num = (int)(floor(pow(2.0, l * 2)));
 		vector<Mat> cells(cells_num);
 		vector<Mat> cells_radon(cells_num);
-		vector<Mat> cells_lbp(cells_num);
+		//vector<Mat> cells_lbp(cells_num);
+		//////////added
+		//vector<Mat> cells_haog(cells_num);
+		/////////////
 		vector<Mat> cells_hist(cells_num);
 		divide_image_into_cells(cells, image);
 		for(int c = 0; c < cells_num; c++) {
 			radon_transform(cells[c], cells_radon[c], mt);
-			if(gabor_flag){
+			/////////////////////////////// added
+			//gabor_flag = false;
+			//apply_lbp(cells[c], cells_lbp[c], R, P);
+			cells_hist[c] = haog::get_hist_haog(cells_radon[c]);
+			
+			//histogram::histogram(cells_lbp[c], cells_hist[c], num_bins, gabor_flag);
+			//////////////////////////////////////
+
+			/*if(gabor_flag){
 				histogram::histogram(cells_radon[c], cells_hist[c], 8, gabor_flag);
 			} else {
 				apply_lbp(cells_radon[c], cells_lbp[c], R, P);
 				histogram::histogram(cells_lbp[c], cells_hist[c], num_bins, gabor_flag);
-			}
+			}*/
 		}
 		concatenate_histograms(cells_hist, image_hists_for_each_level[l]);
 	}
